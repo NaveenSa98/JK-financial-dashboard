@@ -1,0 +1,47 @@
+# PDF Processing Libraries
+pdfplumber==0.10.2
+camelot-py==0.9.0
+tabula-py==2.7.0
+PyPDF2==3.0.1
+ghostscript==0.7
+opencv-python==4.8.1.78
+fitz==0.1.1
+
+# Data Processing Libraries
+pandas==2.1.1
+numpy==1.26.0
+openpyxl==3.1.2
+xlrd==2.0.1
+
+# PDF Table Extraction Dependencies
+pdfminer.six==20221105
+pikepdf==8.10.1
+chardet==5.2.0
+jpype1==1.4.1
+
+# Utilities
+tqdm==4.66.2
+python-dateutil==2.8.2
+
+matplotlib==3.8.0
+seaborn==0.13.0
+
+# Logging
+loguru==0.7.2
+
+# Web server
+Flask==2.3.3
+Flask-Cors==4.0.0
+gunicorn==21.2.0
+
+# Machine Learning and Forecasting
+scikit-learn==1.3.2
+statsmodels==0.14.0
+tensorflow==2.15.0
+keras==2.15.0
+
+# For testing
+pytest==7.4.2
+pytest-mock==3.11.1
+requests==2.31.0
+

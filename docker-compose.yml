@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jk-dashboard-backend
+    restart: unless-stopped
+    volumes:
+      # Mount annual reports directory to persist PDF files
+      - ./backend/scripts/annual_reports:/app/scripts/annual_reports
+      # Mount extracted data directory to persist extracted data
+      - ./backend/scripts/extracted_data:/app/scripts/extracted_data
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=app.py
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: jk-dashboard-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  annual_reports:
+  extracted_data: 

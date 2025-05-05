@@ -172,3 +172,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Annual reports
+backend/scripts/annual_reports/
+backend/scripts/annual_reports/*.pdf

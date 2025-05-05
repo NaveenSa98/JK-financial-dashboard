@@ -1,0 +1,820 @@
+{
+  "metadata": {
+    "generated_at": "2025-05-05T21:39:39.772821",
+    "total_years": 5,
+    "years_covered": [
+      "2019-2020",
+      "2020-2021",
+      "2021-2022",
+      "2022-2023",
+      "2023-2024"
+    ]
+  },
+  "financial_data": {
+    "2019-2020": {
+      "total_revenue": {
+        "value": 128921632.0,
+        "formatted": "LKR 128.92 Mn",
+        "currency": "LKR"
+      },
+      "cost_of_sales": {
+        "value": 113960929.0,
+        "formatted": "LKR 113.96 Mn",
+        "currency": "LKR"
+      },
+      "operating_expenses": {
+        "value": 113563.0,
+        "formatted": "LKR 0.11 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit": {
+        "value": 26081631.0,
+        "formatted": "LKR 26.08 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit_margin": {
+        "value": 20.23,
+        "formatted": "20.23%"
+      },
+      "earnings_per_share": {
+        "value": 19.1,
+        "formatted": "19.10"
+      },
+      "net_asset_per_share": {
+        "value": 164.5,
+        "formatted": "164.50"
+      },
+      "right_issues": {
+        "ratio": "N/A",
+        "issue_price": 2.0,
+        "date": "N/A"
+      },
+      "top_shareholders": {
+        "Mr S E Captain": {
+          "percentage": 11.62,
+          "percentage_formatted": "11.62%",
+          "shares": 153211107.0,
+          "shares_formatted": "153,211,107"
+        },
+        "Citigroup Global Markets Limited Agency Trading Prop Securities A/C": {
+          "percentage": 10.76,
+          "percentage_formatted": "10.76%",
+          "shares": 141854717.0,
+          "shares_formatted": "141,854,717"
+        },
+        "Melstacorp PLC": {
+          "percentage": 9.78,
+          "percentage_formatted": "9.78%",
+          "shares": 128917111.0,
+          "shares_formatted": "128,917,111"
+        },
+        "Paints & General Industries Limited": {
+          "percentage": 7.11,
+          "percentage_formatted": "7.11%",
+          "shares": 93787615.0,
+          "shares_formatted": "93,787,615"
+        },
+        "Schroder International Selection Fund": {
+          "percentage": 3.22,
+          "percentage_formatted": "3.22%",
+          "shares": 42475806.0,
+          "shares_formatted": "42,475,806"
+        },
+        "HWIC Asia Fund": {
+          "percentage": 2.98,
+          "percentage_formatted": "2.98%",
+          "shares": 39250982.0,
+          "shares_formatted": "39,250,982"
+        },
+        "Mr R S Captain": {
+          "percentage": 2.71,
+          "percentage_formatted": "2.71%",
+          "shares": 35733994.0,
+          "shares_formatted": "35,733,994"
+        },
+        "Edgbaston Asian Equity Trust": {
+          "percentage": 2.26,
+          "percentage_formatted": "2.26%",
+          "shares": 29849703.0,
+          "shares_formatted": "29,849,703"
+        },
+        "Norges Bank Account 2": {
+          "percentage": 2.15,
+          "percentage_formatted": "2.15%",
+          "shares": 28394516.0,
+          "shares_formatted": "28,394,516"
+        },
+        "Aberdeen Standard Asia Focus PLC": {
+          "percentage": 1.72,
+          "percentage_formatted": "1.72%",
+          "shares": 22693572.0,
+          "shares_formatted": "22,693,572"
+        },
+        "Aberdeen Standard SICAV I - Asia Pacific Equity Fund": {
+          "percentage": 1.51,
+          "percentage_formatted": "1.51%",
+          "shares": 19898613.0,
+          "shares_formatted": "19,898,613"
+        },
+        "Mr Kandiah Balendra": {
+          "percentage": 1.48,
+          "percentage_formatted": "1.48%",
+          "shares": 19511476.0,
+          "shares_formatted": "19,511,476"
+        },
+        "Fidelity Fund - Pacific": {
+          "percentage": 1.45,
+          "percentage_formatted": "1.45%",
+          "shares": 19060108.0,
+          "shares_formatted": "19,060,108"
+        },
+        "Employees Trust Fund Board": {
+          "percentage": 1.42,
+          "percentage_formatted": "1.42%",
+          "shares": 18690918.0,
+          "shares_formatted": "18,690,918"
+        },
+        "Aberdeen Standard SICAV I - Asian Smaller Companies Fund": {
+          "percentage": 1.27,
+          "percentage_formatted": "1.27%",
+          "shares": 16763554.0,
+          "shares_formatted": "16,763,554"
+        },
+        "Mrs C S De Fonseka": {
+          "percentage": 1.04,
+          "percentage_formatted": "1.04%",
+          "shares": 13668417.0,
+          "shares_formatted": "13,668,417"
+        },
+        "Schroder Asian Growth Fund": {
+          "percentage": 1.0,
+          "percentage_formatted": "1.00%",
+          "shares": 13164018.0,
+          "shares_formatted": "13,164,018"
+        },
+        "Mrs S A J De Fonseka": {
+          "percentage": 1.0,
+          "percentage_formatted": "1.00%",
+          "shares": 13122826.0,
+          "shares_formatted": "13,122,826"
+        },
+        "LF Ruffer Investment Funds: LF Ruffer Pacific and Emerging Markets Fund": {
+          "percentage": 0.86,
+          "percentage_formatted": "0.86%",
+          "shares": 11297899.0,
+          "shares_formatted": "11,297,899"
+        },
+        "LF Ruffer Total Return Fund": {
+          "percentage": 0.85,
+          "percentage_formatted": "0.85%",
+          "shares": 11154285.0,
+          "shares_formatted": "11,154,285"
+        }
+      }
+    },
+    "2020-2021": {
+      "total_revenue": {
+        "value": 114454483.0,
+        "formatted": "LKR 114.45 Mn",
+        "currency": "LKR"
+      },
+      "cost_of_sales": {
+        "value": 108747058.0,
+        "formatted": "LKR -108.75 Mn",
+        "currency": "LKR"
+      },
+      "operating_expenses": {
+        "value": 94874.0,
+        "formatted": "LKR -0.09 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit": {
+        "value": 18928592.0,
+        "formatted": "LKR 18.93 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit_margin": {
+        "value": 16.54,
+        "formatted": "16.54%"
+      },
+      "earnings_per_share": {
+        "value": 3.62,
+        "formatted": "3.62"
+      },
+      "net_asset_per_share": {
+        "value": 171.4,
+        "formatted": "171.40"
+      },
+      "right_issues": {
+        "ratio": "N/A",
+        "issue_price": 2.0,
+        "date": "N/A"
+      },
+      "top_shareholders": {
+        "Mr S E Captain": {
+          "percentage": 11.42,
+          "percentage_formatted": "11.42%",
+          "shares": 150769641.0,
+          "shares_formatted": "150,769,641"
+        },
+        "Citigroup Global Markets Limited Agency Trading Prop Securities A/C": {
+          "percentage": 10.75,
+          "percentage_formatted": "10.75%",
+          "shares": 141854717.0,
+          "shares_formatted": "141,854,717"
+        },
+        "Melstacorp PLC": {
+          "percentage": 9.77,
+          "percentage_formatted": "9.77%",
+          "shares": 128917111.0,
+          "shares_formatted": "128,917,111"
+        },
+        "Paints and General Industries Limited": {
+          "percentage": 8.71,
+          "percentage_formatted": "8.71%",
+          "shares": 114977303.0,
+          "shares_formatted": "114,977,303"
+        },
+        "Schroder International Selection Fund": {
+          "percentage": 3.22,
+          "percentage_formatted": "3.22%",
+          "shares": 42475806.0,
+          "shares_formatted": "42,475,806"
+        },
+        "HWIC Asia Fund": {
+          "percentage": 2.97,
+          "percentage_formatted": "2.97%",
+          "shares": 39250982.0,
+          "shares_formatted": "39,250,982"
+        },
+        "Mr R S Captain": {
+          "percentage": 2.69,
+          "percentage_formatted": "2.69%",
+          "shares": 35544282.0,
+          "shares_formatted": "35,544,282"
+        },
+        "Norges Bank Account 2": {
+          "percentage": 2.4,
+          "percentage_formatted": "2.40%",
+          "shares": 31706807.0,
+          "shares_formatted": "31,706,807"
+        },
+        "Aberdeen Standard Asia Focus PLC": {
+          "percentage": 1.81,
+          "percentage_formatted": "1.81%",
+          "shares": 23873572.0,
+          "shares_formatted": "23,873,572"
+        },
+        "Mr Kandiah Balendra": {
+          "percentage": 1.48,
+          "percentage_formatted": "1.48%",
+          "shares": 19511476.0,
+          "shares_formatted": "19,511,476"
+        },
+        "Employees Trust Fund Board": {
+          "percentage": 1.42,
+          "percentage_formatted": "1.42%",
+          "shares": 18709833.0,
+          "shares_formatted": "18,709,833"
+        },
+        "Fidelity Fund - Pacific": {
+          "percentage": 1.35,
+          "percentage_formatted": "1.35%",
+          "shares": 17880904.0,
+          "shares_formatted": "17,880,904"
+        },
+        "Mrs C S De Fonseka": {
+          "percentage": 1.28,
+          "percentage_formatted": "1.28%",
+          "shares": 16952586.0,
+          "shares_formatted": "16,952,586"
+        },
+        "Mrs S A J De Fonseka": {
+          "percentage": 1.15,
+          "percentage_formatted": "1.15%",
+          "shares": 15204230.0,
+          "shares_formatted": "15,204,230"
+        },
+        "Edgbaston Asian Equity Trust": {
+          "percentage": 1.12,
+          "percentage_formatted": "1.12%",
+          "shares": 14809382.0,
+          "shares_formatted": "14,809,382"
+        },
+        "Chemanex PLC": {
+          "percentage": 0.87,
+          "percentage_formatted": "0.87%",
+          "shares": 11417835.0,
+          "shares_formatted": "11,417,835"
+        },
+        "LF Ruffer Investment Funds: LF Ruffer Pacific and Emerging Markets Fund": {
+          "percentage": 0.86,
+          "percentage_formatted": "0.86%",
+          "shares": 11297899.0,
+          "shares_formatted": "11,297,899"
+        },
+        "Mr K N J Balendra": {
+          "percentage": 0.83,
+          "percentage_formatted": "0.83%",
+          "shares": 10907628.0,
+          "shares_formatted": "10,907,628"
+        },
+        "Schroder Asian Growth Fund": {
+          "percentage": 0.78,
+          "percentage_formatted": "0.78%",
+          "shares": 10328047.0,
+          "shares_formatted": "10,328,047"
+        },
+        "Employee's Provident Fund": {
+          "percentage": 0.77,
+          "percentage_formatted": "0.77%",
+          "shares": 10159322.0,
+          "shares_formatted": "10,159,322"
+        }
+      }
+    },
+    "2021-2022": {
+      "total_revenue": {
+        "value": 202849175.0,
+        "formatted": "LKR 202.85 Mn",
+        "currency": "LKR"
+      },
+      "cost_of_sales": {
+        "value": 180430008.0,
+        "formatted": "LKR 180.43 Mn",
+        "currency": "LKR"
+      },
+      "operating_expenses": {
+        "value": 108037.0,
+        "formatted": "LKR 0.11 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit": {
+        "value": 37644738.0,
+        "formatted": "LKR 37.64 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit_margin": {
+        "value": 18.56,
+        "formatted": "18.56%"
+      },
+      "earnings_per_share": {
+        "value": 19.1,
+        "formatted": "19.10"
+      },
+      "net_asset_per_share": {
+        "value": 224.8,
+        "formatted": "224.80"
+      },
+      "right_issues": {
+        "ratio": "N/A",
+        "issue_price": "N/A",
+        "date": "N/A"
+      },
+      "top_shareholders": {
+        "Paints and General Industries Limited": {
+          "percentage": 10.14,
+          "percentage_formatted": "10.14%",
+          "shares": 140437428.0,
+          "shares_formatted": "140,437,428"
+        },
+        "Mr S E Captain": {
+          "percentage": 9.69,
+          "percentage_formatted": "9.69%",
+          "shares": 134220895.0,
+          "shares_formatted": "134,220,895"
+        },
+        "Melstacorp PLC": {
+          "percentage": 9.31,
+          "percentage_formatted": "9.31%",
+          "shares": 128917111.0,
+          "shares_formatted": "128,917,111"
+        },
+        "HWIC Asia Fund": {
+          "percentage": 8.61,
+          "percentage_formatted": "8.61%",
+          "shares": 119200760.0,
+          "shares_formatted": "119,200,760"
+        },
+        "Asian Development Bank": {
+          "percentage": 4.7,
+          "percentage_formatted": "4.70%",
+          "shares": 65042006.0,
+          "shares_formatted": "65,042,006"
+        },
+        "Citigroup Global Markets Limited Agency Trading Prop Securities A/C": {
+          "percentage": 4.47,
+          "percentage_formatted": "4.47%",
+          "shares": 61904939.0,
+          "shares_formatted": "61,904,939"
+        },
+        "Schroder International Selection Fund": {
+          "percentage": 3.03,
+          "percentage_formatted": "3.03%",
+          "shares": 41974590.0,
+          "shares_formatted": "41,974,590"
+        },
+        "Mr R S Captain": {
+          "percentage": 2.48,
+          "percentage_formatted": "2.48%",
+          "shares": 34405091.0,
+          "shares_formatted": "34,405,091"
+        },
+        "Norges Bank Account 2": {
+          "percentage": 2.3,
+          "percentage_formatted": "2.30%",
+          "shares": 31901605.0,
+          "shares_formatted": "31,901,605"
+        },
+        "Aberdeen Standard Asia Focus PLC": {
+          "percentage": 2.03,
+          "percentage_formatted": "2.03%",
+          "shares": 28123572.0,
+          "shares_formatted": "28,123,572"
+        },
+        "Mr Kandiah Balendra": {
+          "percentage": 1.41,
+          "percentage_formatted": "1.41%",
+          "shares": 19511476.0,
+          "shares_formatted": "19,511,476"
+        },
+        "Employees Trust Fund Board": {
+          "percentage": 1.34,
+          "percentage_formatted": "1.34%",
+          "shares": 18499897.0,
+          "shares_formatted": "18,499,897"
+        },
+        "Fidelity Fund - Pacific": {
+          "percentage": 1.29,
+          "percentage_formatted": "1.29%",
+          "shares": 17880904.0,
+          "shares_formatted": "17,880,904"
+        },
+        "Mrs C S De Fonseka": {
+          "percentage": 1.26,
+          "percentage_formatted": "1.26%",
+          "shares": 17472745.0,
+          "shares_formatted": "17,472,745"
+        },
+        "Mrs S A J De Fonseka": {
+          "percentage": 1.1,
+          "percentage_formatted": "1.10%",
+          "shares": 15204230.0,
+          "shares_formatted": "15,204,230"
+        },
+        "Edgbaston Asian Equity Trust": {
+          "percentage": 1.09,
+          "percentage_formatted": "1.09%",
+          "shares": 15142109.0,
+          "shares_formatted": "15,142,109"
+        },
+        "Chemanex PLC": {
+          "percentage": 0.91,
+          "percentage_formatted": "0.91%",
+          "shares": 12605234.0,
+          "shares_formatted": "12,605,234"
+        },
+        "Sri Lanka Insurance Corporation Limited - Life Fund": {
+          "percentage": 0.89,
+          "percentage_formatted": "0.89%",
+          "shares": 12270665.0,
+          "shares_formatted": "12,270,665"
+        },
+        "Mr K N J Balendra": {
+          "percentage": 0.79,
+          "percentage_formatted": "0.79%",
+          "shares": 10907628.0,
+          "shares_formatted": "10,907,628"
+        },
+        "Schroder Asian Growth Fund": {
+          "percentage": 0.75,
+          "percentage_formatted": "0.75%",
+          "shares": 10328047.0,
+          "shares_formatted": "10,328,047"
+        }
+      }
+    },
+    "2022-2023": {
+      "total_revenue": {
+        "value": 260687372.0,
+        "formatted": "LKR 260.69 Mn",
+        "currency": "LKR"
+      },
+      "cost_of_sales": {
+        "value": 227190277.0,
+        "formatted": "LKR 227.19 Mn",
+        "currency": "LKR"
+      },
+      "operating_expenses": {
+        "value": 121456.0,
+        "formatted": "LKR 0.12 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit": {
+        "value": 49449630.0,
+        "formatted": "LKR 49.45 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit_margin": {
+        "value": 18.97,
+        "formatted": "18.97%"
+      },
+      "earnings_per_share": {
+        "value": 13.12,
+        "formatted": "13.12"
+      },
+      "net_asset_per_share": {
+        "value": 248.6,
+        "formatted": "248.60"
+      },
+      "right_issues": {
+        "ratio": "N/A",
+        "issue_price": 18.0,
+        "date": "N/A"
+      },
+      "top_shareholders": {
+        "Mr S E Captain": {
+          "percentage": 9.68,
+          "percentage_formatted": "9.68%",
+          "shares": 134044705.0,
+          "shares_formatted": "134,044,705"
+        },
+        "Melstacorp PLC": {
+          "percentage": 9.31,
+          "percentage_formatted": "9.31%",
+          "shares": 128917111.0,
+          "shares_formatted": "128,917,111"
+        },
+        "HWIC Asia Fund": {
+          "percentage": 8.61,
+          "percentage_formatted": "8.61%",
+          "shares": 119200760.0,
+          "shares_formatted": "119,200,760"
+        },
+        "Paints and General Industries Limited": {
+          "percentage": 7.27,
+          "percentage_formatted": "7.27%",
+          "shares": 100717931.0,
+          "shares_formatted": "100,717,931"
+        },
+        "Asian Development Bank": {
+          "percentage": 4.7,
+          "percentage_formatted": "4.70%",
+          "shares": 65042006.0,
+          "shares_formatted": "65,042,006"
+        },
+        "Citigroup Global Markets Limited Agency Trading Prop Securities A/C": {
+          "percentage": 4.47,
+          "percentage_formatted": "4.47%",
+          "shares": 61904939.0,
+          "shares_formatted": "61,904,939"
+        },
+        "Schroder International Selection Fund": {
+          "percentage": 3.21,
+          "percentage_formatted": "3.21%",
+          "shares": 44418290.0,
+          "shares_formatted": "44,418,290"
+        },
+        "CIC Holdings PLC": {
+          "percentage": 2.55,
+          "percentage_formatted": "2.55%",
+          "shares": 35338032.0,
+          "shares_formatted": "35,338,032"
+        },
+        "Aberdeen Standard Asia Focus PLC": {
+          "percentage": 2.41,
+          "percentage_formatted": "2.41%",
+          "shares": 33398572.0,
+          "shares_formatted": "33,398,572"
+        },
+        "Norges Bank Account 2": {
+          "percentage": 2.3,
+          "percentage_formatted": "2.30%",
+          "shares": 31901605.0,
+          "shares_formatted": "31,901,605"
+        },
+        "Sri Lanka Insurance Corporation Limited - Life Fund": {
+          "percentage": 1.58,
+          "percentage_formatted": "1.58%",
+          "shares": 21846511.0,
+          "shares_formatted": "21,846,511"
+        },
+        "Mr Kandiah Balendra": {
+          "percentage": 1.41,
+          "percentage_formatted": "1.41%",
+          "shares": 19511476.0,
+          "shares_formatted": "19,511,476"
+        },
+        "Employees Trust Fund Board": {
+          "percentage": 1.34,
+          "percentage_formatted": "1.34%",
+          "shares": 18499897.0,
+          "shares_formatted": "18,499,897"
+        },
+        "Mrs C S De Fonseka": {
+          "percentage": 1.27,
+          "percentage_formatted": "1.27%",
+          "shares": 17606991.0,
+          "shares_formatted": "17,606,991"
+        },
+        "Edgbaston Asian Equity Trust": {
+          "percentage": 1.27,
+          "percentage_formatted": "1.27%",
+          "shares": 17520023.0,
+          "shares_formatted": "17,520,023"
+        },
+        "Fidelity Fund - Pacific": {
+          "percentage": 1.1,
+          "percentage_formatted": "1.10%",
+          "shares": 15244082.0,
+          "shares_formatted": "15,244,082"
+        },
+        "Mrs S A J De Fonseka": {
+          "percentage": 1.1,
+          "percentage_formatted": "1.10%",
+          "shares": 15204230.0,
+          "shares_formatted": "15,204,230"
+        },
+        "Polypak Secco Limited": {
+          "percentage": 1.08,
+          "percentage_formatted": "1.08%",
+          "shares": 14937924.0,
+          "shares_formatted": "14,937,924"
+        },
+        "Chemanex PLC": {
+          "percentage": 0.95,
+          "percentage_formatted": "0.95%",
+          "shares": 13105475.0,
+          "shares_formatted": "13,105,475"
+        },
+        "Sunsuper Superannuation Fund": {
+          "percentage": 0.84,
+          "percentage_formatted": "0.84%",
+          "shares": 11587196.0,
+          "shares_formatted": "11,587,196"
+        }
+      }
+    },
+    "2023-2024": {
+      "total_revenue": {
+        "value": 262338375.0,
+        "formatted": "LKR 262.34 Mn",
+        "currency": "LKR"
+      },
+      "cost_of_sales": {
+        "value": 226490684.0,
+        "formatted": "LKR 226.49 Mn",
+        "currency": "LKR"
+      },
+      "operating_expenses": {
+        "value": 144551.0,
+        "formatted": "LKR 0.14 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit": {
+        "value": 54281920.0,
+        "formatted": "LKR 54.28 Mn",
+        "currency": "LKR"
+      },
+      "gross_profit_margin": {
+        "value": 20.69,
+        "formatted": "20.69%"
+      },
+      "earnings_per_share": {
+        "value": 8.0613,
+        "formatted": "8.06"
+      },
+      "net_asset_per_share": {
+        "value": 238.8,
+        "formatted": "238.80"
+      },
+      "right_issues": {
+        "ratio": "N/A",
+        "issue_price": 2.0,
+        "date": "N/A"
+      },
+      "top_shareholders": {
+        "Melstacorp PLC": {
+          "percentage": 9.31,
+          "percentage_formatted": "9.31%",
+          "shares": 128917111,
+          "shares_formatted": "128,917,111"
+        },
+        "Mr S E Captain": {
+          "percentage": 9.1,
+          "percentage_formatted": "9.10%",
+          "shares": 126044705,
+          "shares_formatted": "126,044,705"
+        },
+        "HWIC Asia Fund": {
+          "percentage": 8.61,
+          "percentage_formatted": "8.61%",
+          "shares": 119200760,
+          "shares_formatted": "119,200,760"
+        },
+        "Paints and General Industries Limited": {
+          "percentage": 7.27,
+          "percentage_formatted": "7.27%",
+          "shares": 100717931,
+          "shares_formatted": "100,717,931"
+        },
+        "Asian Development Bank": {
+          "percentage": 4.7,
+          "percentage_formatted": "4.70%",
+          "shares": 65042006,
+          "shares_formatted": "65,042,006"
+        },
+        "Citigroup Global Markets Limited Agency Trading": {
+          "percentage": 4.47,
+          "percentage_formatted": "4.47%",
+          "shares": 61904939,
+          "shares_formatted": "61,904,939"
+        },
+        "Schroder International Selection Fund": {
+          "percentage": 3.21,
+          "percentage_formatted": "3.21%",
+          "shares": 44418290,
+          "shares_formatted": "44,418,290"
+        },
+        "CIC Holdings PLC": {
+          "percentage": 2.55,
+          "percentage_formatted": "2.55%",
+          "shares": 35338032,
+          "shares_formatted": "35,338,032"
+        },
+        "Aberdeen Standard Asia Focus PLC": {
+          "percentage": 2.41,
+          "percentage_formatted": "2.41%",
+          "shares": 33398572,
+          "shares_formatted": "33,398,572"
+        },
+        "Norges Bank Account 2": {
+          "percentage": 2.3,
+          "percentage_formatted": "2.30%",
+          "shares": 31901605,
+          "shares_formatted": "31,901,605"
+        },
+        "Sri Lanka Insurance Corporation Limited - Life Fund": {
+          "percentage": 1.58,
+          "percentage_formatted": "1.58%",
+          "shares": 21846511,
+          "shares_formatted": "21,846,511"
+        },
+        "Mr Kandiah Balendra": {
+          "percentage": 1.41,
+          "percentage_formatted": "1.41%",
+          "shares": 19511476,
+          "shares_formatted": "19,511,476"
+        },
+        "Employees Trust Fund Board": {
+          "percentage": 1.34,
+          "percentage_formatted": "1.34%",
+          "shares": 18499897,
+          "shares_formatted": "18,499,897"
+        },
+        "Mrs C S De Fonseka": {
+          "percentage": 1.27,
+          "percentage_formatted": "1.27%",
+          "shares": 17606991,
+          "shares_formatted": "17,606,991"
+        },
+        "Edgbaston Asian Equity Trust": {
+          "percentage": 1.27,
+          "percentage_formatted": "1.27%",
+          "shares": 17520023,
+          "shares_formatted": "17,520,023"
+        },
+        "Fidelity Fund - Pacific": {
+          "percentage": 1.1,
+          "percentage_formatted": "1.10%",
+          "shares": 15244082,
+          "shares_formatted": "15,244,082"
+        },
+        "Mrs S A J De Fonseka": {
+          "percentage": 1.1,
+          "percentage_formatted": "1.10%",
+          "shares": 15204230,
+          "shares_formatted": "15,204,230"
+        },
+        "Polypak Secco Limited": {
+          "percentage": 1.08,
+          "percentage_formatted": "1.08%",
+          "shares": 14937924,
+          "shares_formatted": "14,937,924"
+        },
+        "Chemanex PLC": {
+          "percentage": 0.95,
+          "percentage_formatted": "0.95%",
+          "shares": 13105475,
+          "shares_formatted": "13,105,475"
+        },
+        "Sunsuper Superannuation Fund": {
+          "percentage": 0.84,
+          "percentage_formatted": "0.84%",
+          "shares": 11587196,
+          "shares_formatted": "11,587,196"
+        }
+      }
+    }
+  }
+}

@@ -3,82 +3,162 @@ import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { useData } from '../../context/DataContext';
 import { fetchShareholdersData } from '../../api/services';
-import { getChartOptions, preparePieChartData } from '../../utils/chartConfig';
 import { formatPercentage } from '../../utils/formatters';
-import { AVAILABLE_YEARS } from '../../utils/constants';
 import ExportOptions from '../common/ExportOptions';
+import { chartColors } from '../../utils/chartConfig';
 
 // Register ChartJS components
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+// Create a pie chart color array since it's not defined in chartColors
+const pieChartColors = [
+  'rgba(54, 162, 235, 0.7)',
+  'rgba(255, 99, 132, 0.7)',
+  'rgba(255, 206, 86, 0.7)',
+  'rgba(75, 192, 192, 0.7)',
+  'rgba(153, 102, 255, 0.7)',
+  'rgba(255, 159, 64, 0.7)',
+  'rgba(199, 199, 199, 0.7)',
+  'rgba(83, 102, 255, 0.7)',
+  'rgba(255, 99, 71, 0.7)',
+  'rgba(107, 142, 35, 0.7)'
+];
 
 const ShareholdersChart = () => {
   const { selectedYears } = useData();
   const [chartData, setChartData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedYear, setSelectedYear] = useState(Math.max(...selectedYears));
-  const [shareholders, setShareholders] = useState([]);
-  const [selectedSlice, setSelectedSlice] = useState(null);
+  const [error, setError] = useState(null);
+  const [year, setYear] = useState(selectedYears[0] || new Date().getFullYear());
   const chartRef = useRef(null);
-  
+
   // Fetch data
   useEffect(() => {
-    if (!selectedYear) return;
-    
     const loadData = async () => {
       try {
         setIsLoading(true);
+        setError(null);
         
-        const params = {
-          year: selectedYear
-        };
+        console.log("Fetching shareholders data for year:", year);
+        const shareholdersData = await fetchShareholdersData({ year });
+        console.log("Shareholders data received:", shareholdersData);
         
-        const shareholdersData = await fetchShareholdersData(params);
-        setShareholders(shareholdersData);
+        if (!shareholdersData || !Array.isArray(shareholdersData)) {
+          console.error("Invalid shareholders data format:", shareholdersData);
+          setError("Invalid data format received from API");
+          setIsLoading(false);
+          return;
+        }
+
+        if (shareholdersData.length === 0) {
+          console.warn("No shareholders data returned from API");
+          setChartData(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Validate the data structure
+        const isValidStructure = shareholdersData.every(item => 
+          typeof item === 'object' && 
+          item !== null && 
+          'name' in item && 
+          'percentage' in item
+        );
+        
+        if (!isValidStructure) {
+          console.error("Invalid shareholders data structure:", shareholdersData);
+          setError("The data received from the API has an invalid structure");
+          setIsLoading(false);
+          return;
+        }
+        
+        // Sort data by percentage (descending)
+        const sortedData = [...shareholdersData].sort((a, b) => b.percentage - a.percentage);
+        
+        // If we have more than 10 shareholders, show top 9 and combine the rest
+        let chartDataItems = sortedData;
+        let othersPercentage = 0;
+        
+        if (sortedData.length > 10) {
+          chartDataItems = sortedData.slice(0, 9);
+          
+          // Calculate the sum of the rest
+          othersPercentage = sortedData
+            .slice(9)
+            .reduce((sum, item) => sum + (item.percentage || 0), 0);
+          
+          // Add 'Others' item
+          chartDataItems.push({ 
+            name: 'Others', 
+            percentage: othersPercentage,
+            isOthers: true
+          });
+        }
         
         // Prepare data for chart
-        const data = preparePieChartData(shareholdersData, {
-          labelKey: 'name',
-          valueKey: 'percentage',
-          maxSlices: 5,
-          otherLabel: 'Other Shareholders'
-        });
+        const data = {
+          labels: chartDataItems.map(item => item.name),
+          datasets: [
+            {
+              data: chartDataItems.map(item => item.percentage),
+              backgroundColor: pieChartColors.slice(0, chartDataItems.length),
+              borderColor: pieChartColors.map(color => color.replace('0.7', '1')),
+              borderWidth: 1,
+            },
+          ],
+        };
         
-        setChartData(data);
+        setChartData({
+          chartData: data,
+          rawData: chartDataItems
+        });
         setIsLoading(false);
       } catch (error) {
         console.error('Error loading shareholders data:', error);
+        setError(error.message || "Failed to load shareholders data");
         setIsLoading(false);
       }
     };
     
     loadData();
-  }, [selectedYear]);
+  }, [year]);
   
-  // Update selected year when selected years change
+  // Update year when selectedYears changes
   useEffect(() => {
-    if (selectedYears.length > 0) {
-      const maxYear = Math.max(...selectedYears);
-      if (maxYear !== selectedYear && selectedYears.includes(maxYear)) {
-        setSelectedYear(maxYear);
-      } else if (!selectedYears.includes(selectedYear)) {
-        setSelectedYear(selectedYears[0]);
-      }
+    if (selectedYears.length > 0 && !selectedYears.includes(year)) {
+      setYear(selectedYears[0]);
     }
-  }, [selectedYears]);
+  }, [selectedYears, year]);
   
   // Chart options
   const options = {
-    ...getChartOptions('shareholders'),
-    onClick: (_, elements) => {
-      if (elements.length > 0) {
-        const { index } = elements[0];
-        setSelectedSlice(index);
-      } else {
-        setSelectedSlice(null);
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          boxWidth: 12,
+          padding: 15,
+          color: 'rgb(74, 85, 104)',
+          font: {
+            size: 11
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const value = context.raw;
+            return `${context.label}: ${formatPercentage(value)}`;
+          }
+        }
       }
+    },
+    maintainAspectRatio: false,
+    layout: {
+      padding: 20
     }
   };
-  
+
   // Handle export
   const handleExport = (format) => {
     if (!chartRef.current) return;
@@ -88,16 +168,16 @@ const ShareholdersChart = () => {
     switch (format) {
       case 'csv':
         // Export as CSV
-        if (shareholders.length > 0) {
-          const csvContent = 'data:text/csv;charset=utf-8,Rank,Shareholder,Percentage\n' + 
-            shareholders.map((item, index) => 
-              `${index + 1},${item.name},${item.percentage}`
+        if (chartData) {
+          const csvContent = 'data:text/csv;charset=utf-8,Shareholder,Percentage\n' + 
+            chartData.rawData.map(item => 
+              `${item.name},${item.percentage}`
             ).join('\n');
           
           const encodedUri = encodeURI(csvContent);
           const link = document.createElement('a');
           link.setAttribute('href', encodedUri);
-          link.setAttribute('download', `john_keells_shareholders_${selectedYear}.csv`);
+          link.setAttribute('download', `john_keells_shareholders_${year}.csv`);
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -105,15 +185,13 @@ const ShareholdersChart = () => {
         break;
         
       case 'pdf':
-        // For PDF we would use jsPDF library
         alert('PDF export is not implemented in this demo');
         break;
         
       case 'image':
-        // Export as PNG
         const link = document.createElement('a');
         link.href = chart.toBase64Image();
-        link.download = `john_keells_shareholders_chart_${selectedYear}.png`;
+        link.download = `john_keells_shareholders_${year}.png`;
         link.click();
         break;
         
@@ -122,154 +200,83 @@ const ShareholdersChart = () => {
     }
   };
   
-  // Calculate concentration metrics
-  const calculateConcentrationMetrics = () => {
-    if (!shareholders || shareholders.length === 0) return null;
-    
-    const top5Percentage = shareholders.slice(0, 5).reduce((sum, item) => sum + item.percentage, 0);
-    const top10Percentage = shareholders.slice(0, 10).reduce((sum, item) => sum + item.percentage, 0);
-    const top20Percentage = shareholders.reduce((sum, item) => sum + item.percentage, 0);
-    
-    return {
-      top5Percentage,
-      top10Percentage,
-      top20Percentage
-    };
-  };
-  
-  const concentrationMetrics = calculateConcentrationMetrics();
-  
+  // Year selector options
+  const yearOptions = [...selectedYears].sort((a, b) => b - a);
+
   return (
     <div className="card">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-jk-blue dark:text-white">Top Shareholders Distribution</h2>
+        <div className="flex items-center">
+          <h2 className="text-lg font-semibold text-jk-blue dark:text-white mr-4">Top Shareholders</h2>
+          <select 
+            className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md py-1 px-2 text-sm"
+            value={year}
+            onChange={(e) => setYear(parseInt(e.target.value, 10))}
+          >
+            {yearOptions.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+        </div>
         <ExportOptions onExport={handleExport} />
       </div>
       
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Year</label>
-        <div className="flex flex-wrap gap-2">
-          {AVAILABLE_YEARS.filter(year => selectedYears.includes(year)).map((year) => (
-            <button
-              key={year}
-              onClick={() => setSelectedYear(year)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
-                selectedYear === year
-                  ? 'bg-jk-blue text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-            >
-              {year}
-            </button>
-          ))}
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="chart-container md:h-80">
-          {isLoading ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-jk-blue"></div>
-            </div>
-          ) : chartData ? (
-            <Pie ref={chartRef} data={chartData} options={options} />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
-              No data available
-            </div>
-          )}
-        </div>
-        
-        <div>
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Ownership Concentration</h3>
-          
-          {concentrationMetrics && (
-            <div className="space-y-2">
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md">
-                <div className="text-sm text-gray-500 dark:text-gray-400">Top 5 Shareholders</div>
-                <div className="text-xl font-semibold text-jk-blue dark:text-blue-400">
-                  {formatPercentage(concentrationMetrics.top5Percentage)}
-                </div>
-              </div>
-              
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md">
-                <div className="text-sm text-gray-500 dark:text-gray-400">Top 10 Shareholders</div>
-                <div className="text-xl font-semibold text-jk-blue dark:text-blue-400">
-                  {formatPercentage(concentrationMetrics.top10Percentage)}
-                </div>
-              </div>
-              
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md">
-                <div className="text-sm text-gray-500 dark:text-gray-400">Top 20 Shareholders</div>
-                <div className="text-xl font-semibold text-jk-blue dark:text-blue-400">
-                  {formatPercentage(concentrationMetrics.top20Percentage)}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {selectedSlice !== null && chartData && (
-        <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-md">
-          <h3 className="font-medium mb-2">
-            Selected Shareholder:
-          </h3>
-          <div className="flex items-center">
-            <span 
-              className="h-4 w-4 rounded-full mr-2" 
-              style={{ backgroundColor: chartData.datasets[0].backgroundColor[selectedSlice] }}
-            ></span>
-            <div>
-              <span className="font-medium">{chartData.labels[selectedSlice]}</span>
-              <span className="ml-2 text-gray-600 dark:text-gray-400">
-                {formatPercentage(chartData.datasets[0].data[selectedSlice])}
-              </span>
-            </div>
+      <div className="chart-container h-80">
+        {isLoading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-jk-blue"></div>
           </div>
-        </div>
-      )}
+        ) : error ? (
+          <div className="w-full h-full flex flex-col items-center justify-center text-red-500 p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <p className="text-center">{error}</p>
+          </div>
+        ) : chartData ? (
+          <Pie ref={chartRef} data={chartData.chartData} options={options} />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
+            No shareholders data available for {year}
+          </div>
+        )}
+      </div>
       
-      <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Top 10 Shareholders</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+      {chartData && (
+        <div className="mt-4 overflow-x-auto">
+          <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow">
             <thead>
-              <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rank</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Shareholder</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ownership</th>
+              <tr className="bg-gray-100 dark:bg-gray-700 text-left">
+                <th className="py-2 px-4 text-xs font-medium text-gray-600 dark:text-gray-300">Shareholder</th>
+                <th className="py-2 px-4 text-xs font-medium text-gray-600 dark:text-gray-300 text-right">Ownership</th>
+                {chartData.rawData[0].shares && (
+                  <th className="py-2 px-4 text-xs font-medium text-gray-600 dark:text-gray-300 text-right">Shares</th>
+                )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {shareholders.slice(0, 10).map((item, index) => (
-                <tr 
-                  key={item.name} 
-                  className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${selectedSlice === index ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
-                  onClick={() => {
-                    if (index < 5) {
-                      setSelectedSlice(index);
-                    } else if (index >= 5) {
-                      setSelectedSlice(5); // "Others" slice
-                    }
-                  }}
-                >
-                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{index + 1}</td>
-                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{item.name}</td>
-                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                    {formatPercentage(item.percentage)}
-                  </td>
+            <tbody>
+              {chartData.rawData.map((shareholder, index) => (
+                <tr key={index} className="border-t border-gray-200 dark:border-gray-700">
+                  <td className="py-2 px-4 text-xs text-gray-800 dark:text-gray-200">{shareholder.name}</td>
+                  <td className="py-2 px-4 text-xs text-gray-800 dark:text-gray-200 text-right">{formatPercentage(shareholder.percentage)}</td>
+                  {chartData.rawData[0].shares && (
+                    <td className="py-2 px-4 text-xs text-gray-800 dark:text-gray-200 text-right">
+                      {shareholder.shares ? shareholder.shares.toLocaleString() : 'N/A'}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </div>
+      )}
       
-      <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+      <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
         <p>
-          <strong>Note:</strong> Shareholder data represents ownership as of the end of each financial year. 
-          High ownership concentration may impact corporate governance and decision-making processes.
+          <strong>Note:</strong> Data shows the percentage of ownership by major shareholders.
+          {chartData && chartData.rawData.some(item => item.isOthers) && (
+            <> 'Others' category represents smaller shareholders with combined holding of {formatPercentage(chartData.rawData.find(item => item.isOthers)?.percentage || 0)}.</>
+          )}
         </p>
       </div>
     </div>

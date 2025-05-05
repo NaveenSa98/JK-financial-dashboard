@@ -8,6 +8,7 @@ const DataCard = ({
   icon,
   currency = 'LKR',
   isPercentage = false,
+  isFormatted = false,  // New prop to indicate if value is already formatted
   inverse = false,
   loading = false,
   footer = null,
@@ -21,10 +22,12 @@ const DataCard = ({
       ? ((value - previousValue) / Math.abs(previousValue)) * 100
       : null;
   
-  // Format value based on type
-  const formattedValue = isPercentage 
-    ? formatPercentage(value) 
-    : formatCurrency(value, currency);
+  // Format value based on type, unless it's already formatted
+  const formattedValue = isFormatted 
+    ? value 
+    : isPercentage 
+      ? formatPercentage(value) 
+      : formatCurrency(value, currency);
   
   // Format percentage change
   const formattedChange = change !== null 

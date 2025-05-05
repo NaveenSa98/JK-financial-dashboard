@@ -7,8 +7,10 @@ import { fetchFinancialData } from '../api/services';
 import { 
   formatCurrency, 
   formatPercentage, 
-  calculateGrowthRate 
+  calculateGrowthRate,
+  convertLKRtoUSD
 } from '../utils/formatters';
+import { EXCHANGE_RATES } from '../utils/constants';
 
 const Home = () => {
   const { selectedYears, selectedCurrency, selectedIndustryGroups, isMultiYearSelection } = useData();
@@ -66,7 +68,66 @@ const Home = () => {
     return summaryData.yearlyData[0];
   };
   
+  // Convert LKR values to USD if needed
+  const getAdjustedFinancials = (yearData) => {
+    if (!yearData || selectedCurrency === 'LKR') {
+      return yearData?.financials;
+    }
+    
+    const exchangeRate = EXCHANGE_RATES[yearData.year] || 300;
+    const financials = {...yearData.financials};
+    
+    // Handle both raw values and formatted values
+    if (selectedCurrency === 'USD') {
+      // Convert raw numeric values - preserve sign (negative/positive)
+      financials.revenue = convertLKRtoUSD(financials.revenue, exchangeRate);
+      financials.costOfSales = convertLKRtoUSD(financials.costOfSales, exchangeRate);
+      
+      // Fix for operating expenses - make sure we preserve the negative value
+      financials.operatingExpenses = convertLKRtoUSD(financials.operatingExpenses, exchangeRate);
+      // Check if the value is too small and display it properly
+      if (Math.abs(financials.operatingExpenses) < 0.01) {
+        financials.operatingExpenses = financials.operatingExpenses < 0 ? -0.01 : 0.01;
+      }
+      
+      financials.grossProfit = convertLKRtoUSD(financials.grossProfit, exchangeRate);
+      financials.netProfit = convertLKRtoUSD(financials.netProfit, exchangeRate);
+      financials.eps = convertLKRtoUSD(financials.eps, exchangeRate);
+      financials.netAssetPerShare = convertLKRtoUSD(financials.netAssetPerShare, exchangeRate);
+      
+      // Create USD formatted values
+      if (financials.revenueFormatted) {
+        const revMillions = financials.revenue / 1000000;
+        financials.revenueFormatted = `$ ${revMillions.toFixed(2)} Mn`;
+        
+        const costMillions = Math.abs(financials.costOfSales) / 1000000;
+        financials.costOfSalesFormatted = `$ ${costMillions.toFixed(2)} Mn`;
+        
+        // Fix for operating expenses formatting - use absolute value for display
+        const opExMillions = Math.abs(financials.operatingExpenses) / 1000000;
+        // Use more decimal places for very small values
+        const decimals = opExMillions < 0.01 ? 4 : 2;
+        financials.operatingExpensesFormatted = `$ ${opExMillions.toFixed(decimals)} Mn`;
+        
+        const grossProfitMillions = financials.grossProfit / 1000000;
+        financials.grossProfitFormatted = `$ ${grossProfitMillions.toFixed(2)} Mn`;
+        
+        const netProfitMillions = financials.netProfit / 1000000;
+        financials.netProfitFormatted = `$ ${netProfitMillions.toFixed(2)} Mn`;
+        
+        financials.epsFormatted = `$ ${financials.eps.toFixed(2)}`;
+        financials.netAssetPerShareFormatted = `$ ${financials.netAssetPerShare.toFixed(2)}`;
+      }
+    }
+    
+    // Add debug information to help diagnose issues
+    console.log(`Operating Expenses (${yearData.year}): LKR ${yearData.financials.operatingExpenses} → USD ${financials.operatingExpenses}`);
+    
+    return financials;
+  };
+  
   const yearData = getYearData();
+  const financials = getAdjustedFinancials(yearData);
   
   return (
     <div className="space-y-6">
@@ -132,9 +193,9 @@ const Home = () => {
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300">
-              In {yearData.year}, John Keells Holdings had a total revenue of {formatCurrency(yearData.financials.revenue, selectedCurrency)} 
-              with a gross profit margin of {formatPercentage((yearData.financials.revenue - yearData.financials.costOfSales) / yearData.financials.revenue)}.
-              Net profit for the year was {formatCurrency(yearData.financials.netProfit, selectedCurrency)}.
+              In {yearData.year}, John Keells Holdings had a total revenue of {financials.revenueFormatted || formatCurrency(financials.revenue, selectedCurrency)} 
+              with a gross profit margin of {formatPercentage((financials.revenue - financials.costOfSales) / financials.revenue)}.
+              Net profit for the year was {financials.netProfitFormatted || formatCurrency(financials.netProfit, selectedCurrency)}.
             </p>
             {isMultiYearSelection && selectedYears.length > 1 && (
               <div className="mt-3 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-md text-sm">
@@ -164,7 +225,8 @@ const Home = () => {
               {/* Revenue Card */}
               <DataCard
                 title="Total Revenue"
-                value={yearData.financials.revenue}
+                value={financials.revenueFormatted ? financials.revenueFormatted : financials.revenue}
+                isFormatted={!!financials.revenueFormatted}
                 currency={selectedCurrency}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -177,8 +239,9 @@ const Home = () => {
               {/* Gross Profit Margin Card */}
               <DataCard
                 title="Gross Profit Margin"
-                value={(yearData.financials.revenue - yearData.financials.costOfSales) / yearData.financials.revenue * 100}
-                isPercentage={true}
+                value={financials.grossProfitMarginFormatted ? financials.grossProfitMarginFormatted : ((financials.revenue - financials.costOfSales) / financials.revenue * 100)}
+                isFormatted={!!financials.grossProfitMarginFormatted}
+                isPercentage={!financials.grossProfitMarginFormatted}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clipRule="evenodd" />
@@ -190,8 +253,9 @@ const Home = () => {
               {/* EPS Card */}
               <DataCard
                 title="Earnings Per Share"
-                value={yearData.financials.eps}
-                currency={selectedCurrency}
+                value={financials.epsFormatted ? financials.epsFormatted : financials.eps}
+                isFormatted={!!financials.epsFormatted}
+                currency={!financials.epsFormatted ? selectedCurrency : null}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
@@ -204,8 +268,9 @@ const Home = () => {
               {/* Net Asset Per Share Card */}
               <DataCard
                 title="Net Asset Per Share"
-                value={yearData.financials.netAssetPerShare}
-                currency={selectedCurrency}
+                value={financials.netAssetPerShareFormatted ? financials.netAssetPerShareFormatted : financials.netAssetPerShare}
+                isFormatted={!!financials.netAssetPerShareFormatted}
+                currency={!financials.netAssetPerShareFormatted ? selectedCurrency : null}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm11 1H6v8l4-2 4 2V6z" clipRule="evenodd" />
@@ -224,27 +289,29 @@ const Home = () => {
               Financial Performance
             </h2>
           
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Cost of Sales Card */}
               <DataCard
                 title="Cost of Sales"
-                value={yearData.financials.costOfSales}
-                currency={selectedCurrency}
+                value={financials.costOfSalesFormatted ? financials.costOfSalesFormatted : financials.costOfSales}
+                isFormatted={!!financials.costOfSalesFormatted}
+                currency={!financials.costOfSalesFormatted ? selectedCurrency : null}
                 inverse={true} // Lower is better
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" />
                   </svg>
                 }
-                footer={`${formatPercentage(yearData.financials.costOfSales / yearData.financials.revenue)} of revenue`}
+                footer={`${formatPercentage(financials.costOfSales / financials.revenue)} of revenue`}
                 onClick={() => navigate('/visualizations#costVsExpenses')}
               />
               
               {/* Operating Expenses Card */}
               <DataCard
                 title="Operating Expenses"
-                value={yearData.financials.operatingExpenses}
-                currency={selectedCurrency}
+                value={financials.operatingExpensesFormatted ? financials.operatingExpensesFormatted : financials.operatingExpenses}
+                isFormatted={!!financials.operatingExpensesFormatted}
+                currency={!financials.operatingExpensesFormatted ? selectedCurrency : null}
                 inverse={true} // Lower is better
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -252,37 +319,23 @@ const Home = () => {
                     <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
                   </svg>
                 }
-                footer={`${formatPercentage(yearData.financials.operatingExpenses / yearData.financials.revenue)} of revenue`}
+                footer={`${formatPercentage(financials.operatingExpenses / financials.revenue)} of revenue`}
                 onClick={() => navigate('/visualizations#costVsExpenses')}
               />
               
               {/* Net Profit Card */}
               <DataCard
                 title="Net Profit"
-                value={yearData.financials.netProfit}
-                currency={selectedCurrency}
+                value={financials.netProfitFormatted ? financials.netProfitFormatted : financials.netProfit}
+                isFormatted={!!financials.netProfitFormatted}
+                currency={!financials.netProfitFormatted ? selectedCurrency : null}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm4.707 3.707a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L8.414 9H10a3 3 0 013 3v1a1 1 0 102 0v-1a5 5 0 00-5-5H8.414l1.293-1.293z" clipRule="evenodd" />
                   </svg>
                 }
-                footer={`${formatPercentage(yearData.financials.netProfit / yearData.financials.revenue)} net margin`}
+                footer={`${formatPercentage(financials.netProfit / financials.revenue)} net margin`}
                 onClick={() => navigate('/visualizations#eps')}
-              />
-              
-              {/* Total Assets Card */}
-              <DataCard
-                title="Total Assets"
-                value={yearData.financials.totalAssets}
-                currency={selectedCurrency}
-                icon={
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                    <path d="M2 7a1 1 0 011-1h4a1 1 0 110 2H3a1 1 0 01-1-1zm1 3a1 1 0 100 2h4a1 1 0 100-2H3z" />
-                  </svg>
-                }
-                footer={`${formatCurrency(yearData.financials.totalAssets - yearData.financials.totalLiabilities, selectedCurrency, 0)} net assets`}
-                onClick={() => navigate('/visualizations#netAssetPerShare')}
               />
             </div>
           </div>

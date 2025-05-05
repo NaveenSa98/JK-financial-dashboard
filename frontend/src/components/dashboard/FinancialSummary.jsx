@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 import DataCard from '../common/DataCard';
-import { fetchFinancialData } from '../../api/services';
+import { fetchDashboardOverview } from '../../api/services';
 import { 
   formatCurrency, 
   formatPercentage, 
@@ -13,108 +13,64 @@ const FinancialSummary = () => {
   const { selectedYears, selectedCurrency, selectedIndustryGroups } = useData();
   const [summaryData, setSummaryData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   // Fetch summary data
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
+        setError(null);
         
-        // In a real application, we would fetch a summary endpoint
-        // For this demo, we'll use the mock data
-        const data = await fetchFinancialData();
+        console.log("Fetching dashboard overview data...");
+        const overviewData = await fetchDashboardOverview();
+        console.log("Dashboard overview data received:", overviewData);
         
-        // Filter by selected years and industry groups
-        const filteredData = {
-          ...data,
-          yearlyData: data.yearlyData.filter(item => 
-            selectedYears.includes(item.year) && 
-            (selectedIndustryGroups.length === 0 || 
-              selectedIndustryGroups.some(group => 
-                item.industryGroups && item.industryGroups.includes(group)
-              )
-            )
-          )
-        };
+        if (!overviewData) {
+          throw new Error("No overview data received from API");
+        }
         
-        // Sort by year ascending
-        filteredData.yearlyData.sort((a, b) => a.year - b.year);
+        // Check if data has the expected structure
+        if (typeof overviewData !== 'object') {
+          console.error("Invalid data format received:", overviewData);
+          throw new Error("Invalid data format received from API");
+        }
         
-        setSummaryData(filteredData);
+        setSummaryData(overviewData);
         setIsLoading(false);
       } catch (error) {
         console.error('Error loading financial summary data:', error);
+        setError(error.message || "Failed to load financial summary");
         setIsLoading(false);
       }
     };
     
     loadData();
-  }, [selectedYears, selectedIndustryGroups]);
+  }, []);
   
-  // Get latest year and previous year data
-  const getLatestYearData = () => {
-    if (!summaryData || !summaryData.yearlyData || summaryData.yearlyData.length === 0) {
-      return { latest: null, previous: null };
+  // Check data before rendering
+  useEffect(() => {
+    if (summaryData) {
+      console.log("Summary data loaded:", summaryData);
+      
+      // Check if data has expected properties
+      if (!summaryData.latestYear) {
+        console.warn("Summary data is missing latestYear property:", summaryData);
+      }
+      
+      if (!summaryData.growthRates) {
+        console.warn("Summary data is missing growthRates property:", summaryData);
+      }
+      
+      // Check if we have top shareholders data
+      if (!summaryData.topShareholders || !Array.isArray(summaryData.topShareholders)) {
+        console.warn("Summary data is missing topShareholders array:", summaryData);
+      }
     }
-    
-    const sortedData = [...summaryData.yearlyData].sort((a, b) => b.year - a.year);
-    const latest = sortedData[0];
-    const previous = sortedData.length > 1 ? sortedData[1] : null;
-    
-    return { latest, previous };
-  };
+  }, [summaryData]);
   
-  const { latest, previous } = getLatestYearData();
-  
-  // Calculate key metrics
-  const calculateMetrics = () => {
-    if (!latest) return null;
-    
-    const revenue = latest.financials.revenue;
-    const costOfSales = latest.financials.costOfSales;
-    const operatingExpenses = latest.financials.operatingExpenses;
-    const grossProfit = revenue - costOfSales;
-    const netProfit = latest.financials.netProfit;
-    
-    const grossProfitMargin = (grossProfit / revenue) * 100;
-    const netProfitMargin = (netProfit / revenue) * 100;
-    const operatingExpenseRatio = (operatingExpenses / revenue) * 100;
-    
-    return {
-      revenue,
-      costOfSales,
-      operatingExpenses,
-      grossProfit,
-      netProfit,
-      grossProfitMargin,
-      netProfitMargin,
-      operatingExpenseRatio,
-      eps: latest.financials.eps,
-      netAssetPerShare: latest.financials.netAssetPerShare
-    };
-  };
-  
-  const metrics = calculateMetrics();
-  
-  // Calculate year-over-year growth
-  const calculateYoYGrowth = () => {
-    if (!latest || !previous) return null;
-    
-    return {
-      revenue: calculateGrowthRate(latest.financials.revenue, previous.financials.revenue),
-      costOfSales: calculateGrowthRate(latest.financials.costOfSales, previous.financials.costOfSales),
-      operatingExpenses: calculateGrowthRate(latest.financials.operatingExpenses, previous.financials.operatingExpenses),
-      grossProfit: calculateGrowthRate(
-        latest.financials.revenue - latest.financials.costOfSales, 
-        previous.financials.revenue - previous.financials.costOfSales
-      ),
-      netProfit: calculateGrowthRate(latest.financials.netProfit, previous.financials.netProfit),
-      eps: calculateGrowthRate(latest.financials.eps, previous.financials.eps),
-      netAssetPerShare: calculateGrowthRate(latest.financials.netAssetPerShare, previous.financials.netAssetPerShare)
-    };
-  };
-  
-  const growth = calculateYoYGrowth();
+  // Default growth rates if missing from API
+  const defaultGrowthRates = { revenueGrowth: 0, grossProfitGrowth: 0, epsGrowth: 0 };
   
   return (
     <div className="space-y-6">
@@ -126,32 +82,40 @@ const FinancialSummary = () => {
             <DataCard key={index} loading={true} />
           ))}
         </div>
-      ) : latest ? (
+      ) : error ? (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <h3 className="text-red-800 dark:text-red-400 font-medium">Error Loading Data</h3>
+          </div>
+          <p className="text-red-700 dark:text-red-300">{error}</p>
+        </div>
+      ) : summaryData ? (
         <>
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-900/50 rounded-lg p-4 mb-6">
             <div className="flex items-center mb-3">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
               </svg>
-              <h2 className="text-lg font-medium text-blue-700 dark:text-blue-300">Summary for FY {latest.year}</h2>
+              <h2 className="text-lg font-medium text-blue-700 dark:text-blue-300">Summary for FY {summaryData.latestYear || "N/A"}</h2>
             </div>
             <p className="text-gray-700 dark:text-gray-300">
-              {latest.year} was a {
-                growth && growth.revenue > 0 
+              {summaryData.latestYear || "The current fiscal year"} was a {
+                (summaryData.growthRates && summaryData.growthRates.revenueGrowth > 0) 
                   ? 'growth year' 
                   : 'challenging year'
               } for John Keells Holdings, with {
-                growth && growth.revenue > 0
-                  ? `revenue growth of ${formatPercentage(growth.revenue)}`
-                  : `a revenue decline of ${formatPercentage(Math.abs(growth ? growth.revenue : 0))}`
-              }. The gross profit margin was {formatPercentage(metrics ? metrics.grossProfitMargin : 0)}, 
-              {
-                previous && 
-                ((latest.financials.revenue - latest.financials.costOfSales) / latest.financials.revenue) > 
-                ((previous.financials.revenue - previous.financials.costOfSales) / previous.financials.revenue)
+                (summaryData.growthRates && summaryData.growthRates.revenueGrowth > 0)
+                  ? `revenue growth of ${formatPercentage(summaryData.growthRates.revenueGrowth)}`
+                  : `a revenue ${summaryData.growthRates?.revenueGrowth < 0 ? 'decline' : 'change'} of ${formatPercentage(Math.abs(summaryData.growthRates?.revenueGrowth || 0))}`
+              }. {summaryData.grossProfitMargin !== undefined ? `The gross profit margin was ${formatPercentage(summaryData.grossProfitMargin)}, 
+              ${
+                (summaryData.growthRates && summaryData.growthRates.grossProfitGrowth > 0)
                   ? ' an improvement'
-                  : ' a decrease'
-              } compared to the previous year.
+                  : ' a change'
+              } compared to the previous year.` : ''}
             </p>
           </div>
           
@@ -159,8 +123,8 @@ const FinancialSummary = () => {
             {/* Revenue Card */}
             <DataCard
               title="Total Revenue"
-              value={metrics ? metrics.revenue : 0}
-              previousValue={previous ? previous.financials.revenue : null}
+              value={summaryData.revenue}
+              growthRate={summaryData.growthRates?.revenueGrowth || 0}
               currency={selectedCurrency}
               icon={
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -173,11 +137,8 @@ const FinancialSummary = () => {
             {/* Gross Profit Margin Card */}
             <DataCard
               title="Gross Profit Margin"
-              value={metrics ? metrics.grossProfitMargin : 0}
-              previousValue={previous ? 
-                ((previous.financials.revenue - previous.financials.costOfSales) / previous.financials.revenue) * 100 
-                : null
-              }
+              value={summaryData.grossProfitMargin}
+              growthRate={summaryData.growthRates?.grossProfitGrowth || 0}
               isPercentage={true}
               icon={
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -190,8 +151,8 @@ const FinancialSummary = () => {
             {/* EPS Card */}
             <DataCard
               title="Earnings Per Share"
-              value={metrics ? metrics.eps : 0}
-              previousValue={previous ? previous.financials.eps : null}
+              value={summaryData.eps}
+              growthRate={summaryData.growthRates?.epsGrowth || 0}
               currency={selectedCurrency}
               icon={
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -205,8 +166,8 @@ const FinancialSummary = () => {
             {/* Net Asset Per Share Card */}
             <DataCard
               title="Net Asset Per Share"
-              value={metrics ? metrics.netAssetPerShare : 0}
-              previousValue={previous ? previous.financials.netAssetPerShare : null}
+              value={summaryData.netAssetPerShare}
+              growthRate={null} // We don't have growth rate for this from the API
               currency={selectedCurrency}
               icon={
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -217,29 +178,34 @@ const FinancialSummary = () => {
             />
           </div>
           
-          {latest.events && latest.events.length > 0 && (
+          {/* Top 5 Shareholders */}
+          {summaryData.topShareholders && Array.isArray(summaryData.topShareholders) && summaryData.topShareholders.length > 0 && (
             <div className="mt-6">
               <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                Key Events ({latest.year})
+                Top 5 Shareholders ({summaryData.latestYear || "Latest Year"})
               </h3>
               
-              <div className="space-y-3">
-                {latest.events.map((event, index) => (
-                  <div 
-                    key={index} 
-                    className={`p-3 rounded-md border-l-4 ${
-                      event.impact === 'positive' 
-                        ? 'bg-green-50 dark:bg-green-900/20 border-green-500' 
-                        : 'bg-red-50 dark:bg-red-900/20 border-red-500'
-                    }`}
-                  >
-                    <div className="flex justify-between">
-                      <h4 className="font-medium">{event.title}</h4>
-                      <span className="text-xs text-gray-500">{event.date}</span>
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{event.description}</p>
-                  </div>
-                ))}
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow">
+                  <thead>
+                    <tr className="bg-gray-100 dark:bg-gray-700 text-left">
+                      <th className="py-2 px-4 text-sm font-medium text-gray-600 dark:text-gray-300">Shareholder</th>
+                      <th className="py-2 px-4 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">Ownership</th>
+                      <th className="py-2 px-4 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">Shares</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {summaryData.topShareholders.map((shareholder, index) => (
+                      <tr key={index} className="border-t border-gray-200 dark:border-gray-700">
+                        <td className="py-2 px-4 text-sm text-gray-800 dark:text-gray-200">{shareholder.name}</td>
+                        <td className="py-2 px-4 text-sm text-gray-800 dark:text-gray-200 text-right">{formatPercentage(shareholder.percentage)}</td>
+                        <td className="py-2 px-4 text-sm text-gray-800 dark:text-gray-200 text-right">
+                          {shareholder.shares ? shareholder.shares.toLocaleString() : 'N/A'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -249,22 +215,16 @@ const FinancialSummary = () => {
               to="/visualizations"
               className="text-blue-600 hover:underline text-sm font-medium flex items-center justify-end"
             >
-              View detailed charts
+              <span>View detailed financial analysis</span>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </Link>
           </div>
         </>
       ) : (
-        <div className="text-center py-8">
-          <p className="text-gray-500 dark:text-gray-400">No data available for the selected filters.</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 btn btn-primary"
-          >
-            Reset Filters
-          </button>
+        <div className="text-center p-6 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <p className="text-gray-600 dark:text-gray-400">No financial data available</p>
         </div>
       )}
     </div>
