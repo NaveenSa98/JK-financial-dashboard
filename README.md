@@ -303,10 +303,3 @@ docker-compose down
 docker-compose up -d --build
 ```
 
-## 📄 License
-
-This project is proprietary and confidential.
-
-## 👥 Contributors
-
-- John Keells Holdings Financial Analytics Team
