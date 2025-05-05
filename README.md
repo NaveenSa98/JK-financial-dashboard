@@ -2,7 +2,7 @@
 
 A comprehensive financial analytics dashboard that extracts, processes, and visualizes data from John Keells Holdings annual reports.
 
-![JK Financial Dashboard](frontend/src/assets/dashboard-preview.png)
+![JK Financial Dashboard](frontend/src/assets/images/dashboard-preview.png)
 
 ## 📋 Overview
 
