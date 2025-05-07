@@ -31,7 +31,7 @@ ChartJS.register(
 
 const ForecastingModule = ({ 
   metricKey = 'revenue', 
-  modelType = 'arima', 
+  modelType = 'lstm', 
   industryGroup = null,
   showIndustrySelector = false,
   onUpdateComplete = null 

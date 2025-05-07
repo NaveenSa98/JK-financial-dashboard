@@ -32,9 +32,8 @@ export const FINANCIAL_METRICS = [
 
 // Forecasting models
 export const FORECASTING_MODELS = [
-  { value: 'arima', label: 'ARIMA', description: 'Autoregressive Integrated Moving Average' },
-  { value: 'linear', label: 'Linear', description: 'Linear Regression' },
   { value: 'lstm', label: 'LSTM', description: 'Long Short-Term Memory Neural Network' },
+  { value: 'linear', label: 'Linear', description: 'Linear Regression' },
   { value: 'seasonal', label: 'Seasonal', description: 'Seasonal Decomposition with Trend Analysis' }
 ];
 

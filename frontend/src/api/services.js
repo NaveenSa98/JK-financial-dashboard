@@ -152,7 +152,16 @@ export const fetchShareholdersData = async (params) => {
 // Fetch dashboard overview data
 export const fetchDashboardOverview = async () => {
   try {
+    console.log("Calling dashboard-overview API endpoint");
     const response = await api.get('/dashboard-overview');
+    console.log("Dashboard overview API response:", response);
+    
+    // Validate the response
+    if (!response || (response.error && !response.latestYear)) {
+      console.error("Invalid dashboard overview response:", response);
+      throw new Error(response.error || "Invalid dashboard data received");
+    }
+    
     return response;
   } catch (error) {
     console.error('Error fetching dashboard overview:', error);
@@ -204,7 +213,9 @@ export const fetchIndustryBreakdown = async (params) => {
 // Generate AI insights
 export const generateAIInsights = async (params) => {
   try {
+    console.log("Making API request to /ai-insights with params:", params);
     const response = await api.post('/ai-insights', params);
+    console.log("API response from /ai-insights:", response);
     return response;
   } catch (error) {
     console.error('Error generating AI insights:', error);
@@ -212,35 +223,103 @@ export const generateAIInsights = async (params) => {
   }
 };
 
+// Analyze report content for text-based insights
+export const analyzeReportContent = async (params) => {
+  try {
+    console.log("Making API request to /analyze-report with params:", params);
+    const response = await api.post('/analyze-report', params);
+    console.log("API response from /analyze-report:", response);
+    return response;
+  } catch (error) {
+    console.error('Error analyzing report content:', error);
+    throw error;
+  }
+};
+
+// Analyze keyword trends across multiple reports
+export const analyzeKeywordTrends = async (params) => {
+  try {
+    const response = await api.post('/keyword-trends', params);
+    return response;
+  } catch (error) {
+    console.error('Error analyzing keyword trends:', error);
+    throw error;
+  }
+};
+
 // Forecast future trends
 export const generateForecast = async (params) => {
   try {
+    console.log("Generating forecast with params:", params);
     const response = await api.post('/forecast', params);
     return response;
   } catch (error) {
     console.error('Error generating forecast:', error);
+    if (error.message.includes('timeout')) {
+      throw new Error('Forecast generation timed out. Please try with fewer years or a different metric.');
+    }
     throw error;
   }
 };
 
-// Generate industry-specific forecasts
+// Generate industry-specific forecasts with retry logic
 export const generateIndustryForecast = async (params) => {
-  try {
-    const response = await api.post('/industry-forecast', params);
-    return response;
-  } catch (error) {
-    console.error('Error generating industry forecast:', error);
-    throw error;
-  }
+  const MAX_RETRIES = 2;
+  let retries = 0;
+  
+  const attemptForecast = async () => {
+    try {
+      console.log(`Generating industry forecast (attempt ${retries + 1}/${MAX_RETRIES + 1})`, params);
+      const response = await api.post('/industry-forecast', params);
+      return response;
+    } catch (error) {
+      console.error(`Error generating industry forecast (attempt ${retries + 1}):`, error);
+      
+      // If we haven't exceeded max retries and it's a timeout error, retry
+      if (retries < MAX_RETRIES && error.message.includes('timeout')) {
+        retries++;
+        console.log(`Retrying industry forecast (attempt ${retries + 1}/${MAX_RETRIES + 1})...`);
+        return attemptForecast();
+      }
+      
+      // Format more specific error messages
+      if (error.message.includes('timeout')) {
+        throw new Error('Industry comparison timed out. LSTM processing is resource-intensive for multiple industries. Try selecting fewer industries or a simpler metric.');
+      }
+      throw error;
+    }
+  };
+  
+  return attemptForecast();
 };
 
-// Generate multi-metric forecasts
+// Generate multi-metric forecasts with retry logic
 export const generateMultiMetricForecast = async (params) => {
-  try {
-    const response = await api.post('/multi-metric-forecast', params);
-    return response;
-  } catch (error) {
-    console.error('Error generating multi-metric forecast:', error);
-    throw error;
-  }
+  const MAX_RETRIES = 2;
+  let retries = 0;
+  
+  const attemptForecast = async () => {
+    try {
+      console.log(`Generating multi-metric forecast (attempt ${retries + 1}/${MAX_RETRIES + 1})`, params);
+      const response = await api.post('/multi-metric-forecast', params);
+      return response;
+    } catch (error) {
+      console.error(`Error generating multi-metric forecast (attempt ${retries + 1}):`, error);
+      
+      // If we haven't exceeded max retries and it's a timeout error, retry
+      if (retries < MAX_RETRIES && error.message.includes('timeout')) {
+        retries++;
+        console.log(`Retrying multi-metric forecast (attempt ${retries + 1}/${MAX_RETRIES + 1})...`);
+        return attemptForecast();
+      }
+      
+      // Format more specific error messages
+      if (error.message.includes('timeout')) {
+        throw new Error('Multi-metric comparison timed out. LSTM processing is resource-intensive for multiple metrics. Try selecting fewer metrics or reducing the forecast period.');
+      }
+      throw error;
+    }
+  };
+  
+  return attemptForecast();
 };

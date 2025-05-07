@@ -9,7 +9,7 @@ import {
   calculateGrowthRate 
 } from '../../utils/formatters';
 
-const FinancialSummary = () => {
+const FinancialSummary = ({ period, onError }) => {
   const { selectedYears, selectedCurrency, selectedIndustryGroups } = useData();
   const [summaryData, setSummaryData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,30 +23,40 @@ const FinancialSummary = () => {
         setError(null);
         
         console.log("Fetching dashboard overview data...");
-        const overviewData = await fetchDashboardOverview();
-        console.log("Dashboard overview data received:", overviewData);
+        const response = await fetchDashboardOverview();
+        console.log("Dashboard overview data received:", response);
         
-        if (!overviewData) {
+        if (!response) {
           throw new Error("No overview data received from API");
         }
         
         // Check if data has the expected structure
-        if (typeof overviewData !== 'object') {
-          console.error("Invalid data format received:", overviewData);
+        if (typeof response !== 'object') {
+          console.error("Invalid data format received:", response);
           throw new Error("Invalid data format received from API");
         }
         
-        setSummaryData(overviewData);
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        
+        // Set the data regardless of structure for debugging
+        setSummaryData(response);
         setIsLoading(false);
       } catch (error) {
         console.error('Error loading financial summary data:', error);
         setError(error.message || "Failed to load financial summary");
         setIsLoading(false);
+        
+        // Pass the error to the parent component if onError prop exists
+        if (onError && typeof onError === 'function') {
+          onError(error);
+        }
       }
     };
     
     loadData();
-  }, []);
+  }, [onError]);
   
   // Check data before rendering
   useEffect(() => {
@@ -91,6 +101,12 @@ const FinancialSummary = () => {
             <h3 className="text-red-800 dark:text-red-400 font-medium">Error Loading Data</h3>
           </div>
           <p className="text-red-700 dark:text-red-300">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-3 px-4 py-2 bg-red-100 text-red-800 rounded-md hover:bg-red-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            Retry
+          </button>
         </div>
       ) : summaryData ? (
         <>
@@ -225,6 +241,12 @@ const FinancialSummary = () => {
       ) : (
         <div className="text-center p-6 bg-gray-100 dark:bg-gray-800 rounded-lg">
           <p className="text-gray-600 dark:text-gray-400">No financial data available</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-3 px-4 py-2 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Refresh Data
+          </button>
         </div>
       )}
     </div>

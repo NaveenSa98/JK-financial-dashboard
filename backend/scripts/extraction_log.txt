@@ -2427,3 +2427,7 @@
 2025-05-05 21:39:39,780 - INFO - Successfully exported consolidated data to ./extracted_data\consolidated_financial_data.json
 2025-05-05 21:39:39,780 - INFO - Successfully extracted data from 5 reports
 2025-05-05 21:39:39,781 - INFO - Process completed successfully
+2025-05-07 21:41:32,866 - INFO - Starting data extraction process
+2025-05-07 21:41:32,866 - INFO - Found 5 PDF files in ./annual_reports
+2025-05-07 21:41:32,866 - INFO - Processing jk_annual_report_19-20.pdf
+2025-05-07 21:41:32,867 - INFO - Processing report for 2019-2020: ./annual_reports\jk_annual_report_19-20.pdf

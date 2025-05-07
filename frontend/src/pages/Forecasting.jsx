@@ -31,9 +31,8 @@ ChartJS.register(
   Filler
 );
 
-// Simplified forecasting models - only ARIMA and LSTM
+// Simplified forecasting models - only LSTM
 const FORECASTING_MODELS = [
-  { value: 'arima', label: 'ARIMA', description: 'Time series analysis for trends' },
   { value: 'lstm', label: 'LSTM', description: 'Neural network for complex patterns' },
 ];
 
@@ -47,7 +46,7 @@ const FORECAST_VIEWS = [
 const Forecasting = () => {
   const { selectedCurrency } = useData();
   const [selectedMetric, setSelectedMetric] = useState('revenue');
-  const [selectedModel, setSelectedModel] = useState('arima');
+  const [selectedModel, setSelectedModel] = useState('lstm');
   const [forecastYears, setForecastYears] = useState(3);
   const [forecastData, setForecastData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -349,7 +348,7 @@ const Forecasting = () => {
             <label className="block text-sm font-medium text-gray-300 mb-2 text-center">
               Model Type
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex justify-center">
               {FORECASTING_MODELS.map(model => (
                 <button
                   key={model.value}
@@ -571,7 +570,6 @@ const Forecasting = () => {
             <strong>Methodology:</strong> We use the following forecasting models:
           </p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>ARIMA (Autoregressive Integrated Moving Average): Analyzes time series data for patterns and trends.</li>
             <li>LSTM (Long Short-Term Memory): Neural network approach for complex pattern recognition and non-linear relationships.</li>
           </ul>
           <p>

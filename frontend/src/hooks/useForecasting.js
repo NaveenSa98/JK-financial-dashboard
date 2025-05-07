@@ -8,7 +8,7 @@ import { generateForecast, generateIndustryForecast } from '../api/services';
  * @param {string|null} initialIndustryGroup - Initial industry group to filter
  * @returns {Object} - Forecast state and functions to update it
  */
-const useForecasting = (initialMetric = 'revenue', initialModel = 'arima', initialIndustryGroup = null) => {
+const useForecasting = (initialMetric = 'revenue', initialModel = 'lstm', initialIndustryGroup = null) => {
   const [metric, setMetric] = useState(initialMetric);
   const [model, setModel] = useState(initialModel);
   const [industryGroup, setIndustryGroup] = useState(initialIndustryGroup);

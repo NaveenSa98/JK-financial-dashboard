@@ -31,7 +31,7 @@ ChartJS.register(
 
 const IndustryForecastComparison = ({ 
   selectedMetric = 'revenue', 
-  modelType = 'arima',
+  modelType = 'lstm',
   forecastYears = 3,
   selectedIndustries = ['Leisure', 'Transportation', 'Financial Services'],
   height = 400
@@ -366,8 +366,12 @@ const IndustryForecastComparison = ({
   return (
     <div className="industry-forecast-comparison">
       {isLoading && (
-        <div className="flex justify-center items-center p-8">
-          <div className="animate-pulse text-gray-500">Loading industry forecasts...</div>
+        <div className="flex flex-col items-center justify-center p-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
+          <div className="text-gray-600 text-center">
+            <p>Loading industry forecasts... This may take up to 30 seconds.</p>
+            <p className="text-sm text-gray-500 mt-2">LSTM neural network calculations for multiple industries require significant processing time.</p>
+          </div>
         </div>
       )}
       
@@ -375,6 +379,17 @@ const IndustryForecastComparison = ({
         <div className="p-4 bg-red-50 text-red-800 rounded-md">
           <p className="font-medium">Error loading forecast data</p>
           <p className="text-sm">{error}</p>
+          {error.includes('timeout') && (
+            <div className="mt-2 text-sm bg-yellow-50 p-2 rounded border border-yellow-200">
+              <p className="font-medium text-yellow-800">Suggestions:</p>
+              <ul className="list-disc pl-5 mt-1 text-yellow-700">
+                <li>Try selecting fewer industries (2-3 maximum)</li>
+                <li>Reduce the forecast period to 1-2 years</li>
+                <li>Consider using a simpler metric like revenue</li>
+                <li>The LSTM model requires significant processing time for multiple industries</li>
+              </ul>
+            </div>
+          )}
         </div>
       )}
       

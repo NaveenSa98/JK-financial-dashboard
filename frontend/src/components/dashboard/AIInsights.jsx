@@ -2,12 +2,20 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 import { generateAIInsights } from '../../api/services';
-import { INSIGHT_TYPES } from '../../utils/constants';
+import { INSIGHT_TYPES, AVAILABLE_YEARS } from '../../utils/constants';
 
 const AIInsights = ({ limit = 3 }) => {
-  const { selectedYears, selectedCurrency, selectedIndustryGroups } = useData();
+  const { selectedYears, selectedCurrency, selectedIndustryGroups, selectAllYears } = useData();
   const [insights, setInsights] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Auto-select all years if not enough are selected
+  useEffect(() => {
+    // Only select all years if fewer than 3 years are currently selected
+    if (selectedYears.length < 3) {
+      selectAllYears();
+    }
+  }, [selectedYears.length, selectAllYears]);
   
   // Fetch AI insights
   useEffect(() => {
